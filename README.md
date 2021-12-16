@@ -4,6 +4,8 @@
 
 - **Currently, this boilerplate supports `discord-py-interactions==3.0.2` but will be updated for future version later on. To switch to a different version, check the branches**
 
+![image](https://user-images.githubusercontent.com/29584664/146406854-88c2dfa8-d346-437e-a57b-1fc73be45b65.png)
+
 # Overview
 > `main.py:`
 - A custom, dynamic cog loader is present. Write a cog following the `template.py` in `/cogs/`, place it in the `/cogs/` directory, and it will automatically be loaded when the bot boots.
