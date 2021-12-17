@@ -1,5 +1,6 @@
 # discord-py-interactions_boilerplate
 <h3 align=center>Boilerplate template for the discord-py-interactions library</h3>
+<p align=center>A stripped down fork from contributions found in <a href="https://github.com/savioxavier/repo-finder-bot">savioxavier/repo-finder-bot</a></p>
 <hr>
 
 - **Currently, this boilerplate supports `discord-py-interactions==3.0.2` but will be updated for future version later on. To switch to a different version, check the branches**
