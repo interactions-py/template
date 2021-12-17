@@ -25,7 +25,10 @@
 
 # Installation
 > 1. Clone this repository. To switch to a different version, `cd` into this cloned repository and run `git checkout -b [branch name/version here]`
-> 2. Create a Discord bot token from [here](https://discord.com/developers/applications/)  
+> 2. It's generally advised to work in a Python virtual environment. Here are steps to create one *(the `discord-py-interactions` library requires python3.6 or later)*:
+> > - `$` `python3 -m venv env`
+> > - `$` `source env/bin/activate`
+> 3. Create a Discord bot token from [here](https://discord.com/developers/applications/)  
 > **Register it for slash commands:**
 > - Under *OAuth2 > General*, set the Authorization Method to "In-app Authorization"
 > - Tick `bot` and `applications.commands`
@@ -33,13 +36,13 @@
 > > - General: Read Messages/View Channels  
 > > - Text Permissions: Send Messages, Manage Messages, and Embed Links
 > - Copy the generated URL at the bottom of the page to invite it to desired servers
-> 3. Make a new file called `.env` inside the repo folder and paste the below code block in the file
+> 4. Make a new file called `.env` inside the repo folder and paste the below code block in the file
 > ```
 > TOKEN="[paste Discord bot token here]"
 > DEV_GUILD=[paste your bot testing server ID here]
 > ```
-> 4. Run `pip install -r requirements.txt` to install packages. You'll need Python 3.6.8 or later
-> 5. Once that's done, run the bot by executing `python3 main.py` in the terminal
+> 5. Run `pip install -r requirements.txt` to install packages. You'll need Python 3.6.8 or later
+> 6. Once that's done, run the bot by executing `python3 main.py` in the terminal
 >
 > <hr />
 > 
