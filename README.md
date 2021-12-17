@@ -58,3 +58,7 @@
 > Again, like above, this could be caused by many different reasons, but here are a couple things you can try
 > - Follow the above steps to ensure your slash commands are registering properly (making sure `applications.command` is enabled, etc.)
 > - Reinvite your bot
+
+| **Special thanks** |
+| --- |
+| To [savioxavier](https://github.com/savioxavier/repo-finder-bot) for authoring the `repo-finder-bot`, allowing contributors alike to make this project happen |
