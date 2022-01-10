@@ -3,7 +3,19 @@
 <p align=center>A stripped down fork from contributions found in <a href="https://github.com/savioxavier/repo-finder-bot">savioxavier/repo-finder-bot</a></p>
 <hr>
 
-- **Currently, this boilerplate supports `discord-py-interactions==3.0.2` but will be updated for future version later on. To switch to a different version, check the branches**
+<table>
+    <tr>
+    <td>
+        <b>Currently, this branch is on 4.0.1-unstable. Be warned, some code may not work as intended and is still actively being worked on. To switch to a different version, check the branches</b>
+    </td>
+    </tr>
+    <tr>
+    <td>
+        If you encounter issues, open an issue in <a href="https://github.com/V3ntus/discord-py-interactions_boilerplate/issues">this repo</a>
+      or in <a href="https://github.com/goverfl0w/discord-interactions/issues">goverfl0w/discord-interactions</a>
+    </td>
+    </tr>
+</table>
 
 ![image](https://user-images.githubusercontent.com/29584664/146406854-88c2dfa8-d346-437e-a57b-1fc73be45b65.png)
 
