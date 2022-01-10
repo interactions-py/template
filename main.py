@@ -9,151 +9,124 @@ Additional thanks to savioxavier
 """
 import os
 import sys
+import logging
 
-import discord
-from discord.ext import commands
-from discord.ext.commands.errors import ExtensionFailed, NoEntryPointError
-from discord_slash import SlashCommand
+import interactions
 from dotenv import load_dotenv
 
 from src import logutil
 from config import DEBUG, DEBUG_DISCORD
-from config import PREFIX as bot_prefix
 
 load_dotenv()
 
 # Configure logging for this main.py handler
 logger = logutil.init_logger("main.py")
 
-# Configure logging for Discord.py
-if DEBUG:
-    logging = logutil.get_logger("discord")
+# Configure logging for Discord.py (continued in on_ready)
+# TODO: overwrite formatter, suppress warnings about missing attributes
 
-logger.warning("Debug mode is %s; Discord debug is %s", DEBUG, DEBUG_DISCORD)
+logger.warning("Debug mode is %s; Discord debug is %s. This is not a warning, \
+just an indicator. You may safely ignore", DEBUG, DEBUG_DISCORD)
 
 # Instantiate environment variables
-DEV_GUILD = [int(os.environ.get("DEV_GUILD"))]
-TOKEN = os.environ.get("TOKEN")
-
-intents = discord.Intents.default()
-intents.members = True  # pylint: disable=assigning-non-slot # noqa
+try:
+    DEV_GUILD = int(os.environ.get("DEV_GUILD"))
+    TOKEN = os.environ.get("TOKEN")
+except TypeError:
+    DEV_GUILD = None
+finally:
+    if TOKEN is None:
+        logger.critical("TOKEN variable not set. Cannot continue")
+        sys.exit(1)
 
 # Define the client
-client = commands.Bot(command_prefix=bot_prefix,
-                      case_insensitive=True,
-                      intents=intents,
-                      help_command=None,
-                      )
-
-# Define the slash command handler
-slash = SlashCommand(client,
-                     sync_commands=True,
-                     sync_on_cog_reload=True,)
+bot = interactions.Client(token=TOKEN)
 
 
 # BEGIN on_ready
+@bot.event
 async def on_ready():
     "Called when bot is ready to receive interactions"
+
+    # globalize this so the user may be able to use it later on
+    global bot_user
+    bot_user = interactions.User(**await bot.http.get_self())
+
     logger.info(
-        "Logged in as %s#%s",
-        client.user.name,
-        client.user.discriminator
+        "Logged in as %s#%s" %
+        (bot_user.username, bot_user.discriminator)
     )
+
+    # Overwrite formatter for interactions loggers
+    for k, v in logging.Logger.manager.loggerDict.items():
+        if k in [
+            "mixin",
+            "dispatch",
+            "http",
+            "gateway",
+            "client",
+            "context"
+        ]:
+            for h in v.handlers:
+                h.setFormatter(logutil.CustomFormatter)
 # END on_ready
 
+
 # BEGIN command_help
+@bot.command(
+    name="help",
+    description="Display help information for this bot",
+    scope=DEV_GUILD
+)
 async def command_help(ctx):
     "Help command"
-    logger.debug("%s - initiated help command",
-                 ctx.message.author)
+    logger.debug("%s#%s - initiated help command",
+                 ctx.author.user.username,
+                 ctx.author.user.discriminator)
 
-    try:
-        _created_at = ctx.message.created_at
-    except AttributeError:
-        _created_at = ctx.created_at
-
-    help_embed = discord.Embed(
+    help_embed = interactions.Embed(
         title="Help",
-        description="Fill me in!",
-        timestamp=_created_at
+        description="Fill me in with a list of commands!",
+        thumbnail=interactions.EmbedImageStruct(
+            url=bot_user.avatar
+        )._json,
+        fields=[
+            interactions.EmbedField(
+                name="help",
+                value="Display help command"
+            ),
+            interactions.EmbedField(
+                name="foo",
+                value="Example command"
+            ),
+            interactions.EmbedField(
+                name="bar",
+                value="Example command"
+            )
+        ],
+        footer=interactions.EmbedFooter(text="Boilerplate Bot")._json,
     )
 
-    help_embed.set_thumbnail(url=client.user.avatar_url)
-    help_embed.set_footer(text="Boilerplate Bot")
-
-    await ctx.send(embed=help_embed)
+    await ctx.send(embeds=help_embed)
 # END command_help
 
+
 # BEGIN on_command_error
-async def on_command_error(ctx: commands.Context, error):
+@bot.event
+async def on_command_error(ctx, error):
     "Gets called when a command fails"
-    if isinstance(error, commands.CommandOnCooldown):
-        # handle cooldown
-        logger.debug(
-            "%s - initiated a command on cooldown [!]"
-        )
-        await ctx.send(
-            f"This command is on cooldown. Try again after `{round(error.retry_after)}` seconds.",
-            delete_after=5
-        )
-    else:
-        # handle anything else
-        logger.warning(
-            "A discord.py command error occured:\n%s",
-            error
-        )
-        await ctx.send(
-            f"A discord.py command error occured:\n{error}",
-            delete_after=10
-        )
+    logger.warning(
+        "A discord.py command error occured:\n%s",
+        error
+    )
+    await ctx.send(
+        f"A discord.py command error occured:\n```\n{error}```",
+        ephemeral=True
+    )
 # END on_command_error
 
 # BEGIN cogs_dynamic_loader
-
-# Fill this array with Python files in /cogs
-# This omits __init__.py, template.py, and excludes files without a py file extension
-command_modules = [
-    module[:-3]
-    for module in os.listdir(f"{os.path.dirname(__file__)}/cogs")
-    if module not in ("__init__.py", "template.py") and module[-3:] == ".py"
-]
-
-if command_modules or command_modules == []:
-    logger.info(
-        "Importing %s cogs: %s",
-        len(command_modules),
-        ', '.join(command_modules)
-    )
-else:
-    logger.warning("Could not import any cogs!")
-
-for module in command_modules:
-    try:
-        client.load_extension("cogs." + module)
-    except NoEntryPointError:
-        logger.error(
-            "Could not import cog %s: The cog has no setup function - NoEntryPointError",
-            module
-        )
-        logger.debug(str(sys.exc_info()[2]))
-    except ExtensionFailed:
-        logger.error(
-            "Could not import cog %s: The cog failed to execute",
-            module
-        )
-        logger.debug(str(sys.exc_info()[2]))
-    except Exception as e: # pylint: disable=broad-except
-        logger.error(
-            "Could not import cog %s:\n%s",
-            module,
-            e
-        )
-
-logger.info("Cog initialization complete")
-logger.debug(
-    "Cogs incoming:\n%s\n",
-    ',\n'.join(command_modules)
-)
+# TODO: write a dynamic modular commands system
 # END cogs_dynamic_loader
 
-client.run(TOKEN)
+bot.start()
