@@ -3,6 +3,3 @@ DEBUG = False
 
 "Enable verbose DEBUG Discord.py messages for logging"
 DEBUG_DISCORD = False
-
-"Bot prefix to respond to"
-PREFIX = "#"

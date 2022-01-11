@@ -1,4 +1,2 @@
-discord-py-interactions==3.0.2
-discord.py==1.7.3
-discord==1.7.3
+git+https://github.com/goverfl0w/discord-interactions@unstable
 python-dotenv==0.19.1
