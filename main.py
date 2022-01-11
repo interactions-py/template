@@ -9,7 +9,9 @@ Additional thanks to savioxavier
 """
 import os
 import sys
+import inspect
 import logging
+import importlib
 
 import interactions
 from dotenv import load_dotenv
@@ -126,7 +128,66 @@ async def on_command_error(ctx, error):
 # END on_command_error
 
 # BEGIN cogs_dynamic_loader
-# TODO: write a dynamic modular commands system
+
+# Fill this array with Python files in /cogs
+# This omits __init__.py, template.py, and excludes files
+# without a py file extension
+command_modules = [
+    module[:-3]
+    for module in os.listdir(f"{os.path.dirname(__file__)}/cogs")
+    if module not in ("__init__.py", "template.py") and module[-3:] == ".py"
+]
+
+if command_modules or command_modules == []:
+    logger.info(
+        "Importing %s command modules: %s",
+        len(command_modules),
+        ', '.join(command_modules)
+    )
+else:
+    logger.warning("Could not import any command modules!")
+
+for _module in command_modules:
+    try:
+        # client.load_extension("cogs." + module)
+        _module_obj = importlib.import_module(f"cogs.{_module}.CommandModule")
+    except Exception as e:  # pylint: disable=broad-except
+        logger.error(
+            "Could not import command module %s:\n%s",
+            _module,
+            e
+        )
+        continue
+
+    # _module_bot_obj = _module_obj.BotObject(bot=bot)
+    # _cmd_module_objects = [
+    #     obj
+    #     for name, obj in inspect.getmembers(sys.modules[f"cogs.{_module}"])
+    #     if inspect.isclass(obj) and str(obj.__name__).upper().endswith("CMD")
+    # ]
+    _cmd_module_objects = []
+    for name, obj in inspect.getmembers(sys.modules[
+            f"cogs.{_module}.CommandModule"]):
+        try:
+            if inspect.isclass(obj) and str(obj.__name__).upper().endswith(
+                    "CMD"):
+                _cmd_module_objects.append(obj)
+        except Exception:
+            logger.warning("Couldn't import %s", obj.__name__)
+
+    # init class instances in the array
+    # is keeping the class obj in this array a good idea?
+    for _cmd_module in _cmd_module_objects:
+        _cmd_module_inst = _cmd_module()
+
+        # manually decorate
+        bot.command(
+            type=_cmd_module_inst.TYPE or None,
+            name=_cmd_module_inst.NAME,
+            description=_cmd_module_inst.DESCRIPTION or None,
+            scope=DEV_GUILD or None,
+            options=_cmd_module_inst.OPTIONS or None
+        )(_cmd_module.command)
 # END cogs_dynamic_loader
 
 bot.start()
