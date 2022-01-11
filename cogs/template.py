@@ -9,21 +9,14 @@ import interactions
 # Highly recommended - we suggest providing proper debug logging
 from src import logutil
 
+"Uncomment if you need to interact with the interactions.Client instance"
+# from src.bot import bot
+
+"Uncomment if you want to check if a user has permissions"
+# from src.permissions import Permissions, has_permission
+
 # Change this if you'd like - this labels log messages for debug mode
 logger = logutil.init_logger(os.path.basename(__file__))
-
-# Use the DEV_GUILD environment variable to instantly
-# load slash commands in your testing guild.
-# Global slash commands are usually cached for an hour
-# due to Discord API restrictions.
-DEV_GUILD = int(os.environ.get("DEV_GUILD")) or None
-
-
-# Create a data struct to store the current interactions.Client
-# instance. Don't remove this
-# class BotObject:
-#     def __init__(self, bot: interactions.Client) -> None:
-#         self.bot = bot
 
 
 # Rename this class to whatever you'd like.
@@ -35,7 +28,7 @@ DEV_GUILD = int(os.environ.get("DEV_GUILD")) or None
 # is triggered.
 class CommandCMD():
     "Main class for bot"
-    def __init__(self, client):
+    def __init__(self):
         # BEGIN cmd_config
         # What will your command respond to?
         self.NAME = "helloworld"
@@ -45,14 +38,7 @@ class CommandCMD():
 
         # Write your options code here
         # (not required. Can be empty)
-        self.OPTIONS = [
-            interactions.Option(
-                name='message',
-                description='The message to echo',
-                type=interactions.OptionType.STRING,
-                required=False
-            )
-        ]
+        self.OPTIONS = []
 
         # What type of command is it?
         # (default: CHAT_INPUT)
@@ -61,7 +47,8 @@ class CommandCMD():
         logger.info("%s command module registered" %
                     __class__.__name__)
 
-    # Pass all arguments as "args" and default to NoneType
+    # If you defined options above,
+    # add them here in the keywords of the command()
     async def command(ctx):
         """
         Your command code goes here
@@ -69,4 +56,4 @@ class CommandCMD():
         await ctx.send("Hello!")
 
 # You can have multiple classes for each command
-# Just define another ClassCMD() below
+# Just define another command class below
