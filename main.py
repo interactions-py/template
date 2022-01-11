@@ -27,6 +27,7 @@ logger = logutil.init_logger("main.py")
 
 # Configure logging for Discord.py (continued in on_ready)
 # TODO: overwrite formatter, suppress warnings about missing attributes
+# interactions PR 421 should fix this
 
 logger.warning("Debug mode is %s; Discord debug is %s. This is not a warning, \
 just an indicator. You may safely ignore", DEBUG, DEBUG_DISCORD)
@@ -126,7 +127,6 @@ async def on_command_error(ctx, error):
 # END on_command_error
 
 # BEGIN cogs_dynamic_loader
-
 # Fill this array with Python files in /cogs
 # This omits __init__.py, template.py, and excludes files
 # without a py file extension
@@ -147,9 +147,8 @@ else:
 
 for _module in command_modules:
     try:
-        # client.load_extension("cogs." + module)
         _module_obj = importlib.import_module(f"cogs.{_module}")
-    except Exception as e:  # pylint: disable=broad-except
+    except Exception as e:
         logger.error(
             "Could not import command module %s:\n%s",
             _module,
@@ -157,12 +156,6 @@ for _module in command_modules:
         )
         continue
 
-    # _module_bot_obj = _module_obj.BotObject(bot=bot)
-    # _cmd_module_objects = [
-    #     obj
-    #     for name, obj in inspect.getmembers(sys.modules[f"cogs.{_module}"])
-    #     if inspect.isclass(obj) and str(obj.__name__).upper().endswith("CMD")
-    # ]
     _cmd_module_objects = []
     for name, obj in inspect.getmembers(sys.modules[
             f"cogs.{_module}"]):
@@ -174,7 +167,6 @@ for _module in command_modules:
             logger.warning("Couldn't import %s", obj.__name__)
 
     # init class instances in the array
-    # is keeping the class obj in this array a good idea?
     for _cmd_module in _cmd_module_objects:
         _cmd_module_inst = _cmd_module()
 
