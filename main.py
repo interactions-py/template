@@ -17,6 +17,7 @@ import interactions
 from dotenv import load_dotenv
 
 from src import logutil
+from src.bot import bot
 from config import DEBUG, DEBUG_DISCORD
 
 load_dotenv()
@@ -40,9 +41,6 @@ finally:
     if TOKEN is None:
         logger.critical("TOKEN variable not set. Cannot continue")
         sys.exit(1)
-
-# Define the client
-bot = interactions.Client(token=TOKEN)
 
 
 # BEGIN on_ready
@@ -150,7 +148,7 @@ else:
 for _module in command_modules:
     try:
         # client.load_extension("cogs." + module)
-        _module_obj = importlib.import_module(f"cogs.{_module}.CommandModule")
+        _module_obj = importlib.import_module(f"cogs.{_module}")
     except Exception as e:  # pylint: disable=broad-except
         logger.error(
             "Could not import command module %s:\n%s",
@@ -167,7 +165,7 @@ for _module in command_modules:
     # ]
     _cmd_module_objects = []
     for name, obj in inspect.getmembers(sys.modules[
-            f"cogs.{_module}.CommandModule"]):
+            f"cogs.{_module}"]):
         try:
             if inspect.isclass(obj) and str(obj.__name__).upper().endswith(
                     "CMD"):
