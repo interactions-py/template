@@ -17,7 +17,7 @@
     </tr>
 </table>
 
-![image](https://user-images.githubusercontent.com/29584664/146406854-88c2dfa8-d346-437e-a57b-1fc73be45b65.png)
+![image](https://user-images.githubusercontent.com/29584664/149206003-31a184ad-89e2-4481-978b-129cdebb892f.png)
 
 # Overview
 *As of discord-py-interactions v4.0.1, cog support is still in a planned stage and not supported. Until they are added, command modules will be in place of cogs*
