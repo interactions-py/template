@@ -80,3 +80,5 @@
 | **Special thanks** |
 | --- |
 | To [savioxavier](https://github.com/savioxavier/repo-finder-bot) for authoring the `repo-finder-bot`, allowing contributors alike to make this project happen |
+
+[![wakatime](https://wakatime.com/badge/github/V3ntus/discord-py-interactions_boilerplate.svg)](https://wakatime.com/badge/github/V3ntus/discord-py-interactions_boilerplate)
