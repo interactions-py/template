@@ -1,5 +1,5 @@
-# discord-py-interactions_boilerplate
-<h3 align=center>Boilerplate template for the discord-py-interactions library</h3>
+# interactions.py-boilerplate
+<h3 align=center>Python boilerplate template for the interactions.py Discord API wrapper</h3>
 <p align=center>A stripped down fork from contributions found in <a href="https://github.com/savioxavier/repo-finder-bot">savioxavier/repo-finder-bot</a></p>
 <hr>
 
