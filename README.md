@@ -10,11 +10,11 @@
     </tr>
     <tr>
     <td>
-        All version branches in this repo are considered in-development unless merged into `main` branch
+        All version branches in this repo are considered in-development unless merged into <code>main</code> branch
     </td>
     </tr>
     <tr><td>
-        Status: `in-development`
+        Status: <code>in-development</code>
     </td></tr>
 </table>
 
