@@ -4,16 +4,20 @@ Example cog for real world use
 This is safe to delete
 """
 import os
+import interactions
+
 from interactions import (
     Option,
     OptionType,
-    ApplicationCommandType,
     Button,
-    ButtonStyle
+    ButtonStyle,
+    ActionRow,
+    SelectMenu,
+    SelectOption
 )
 
+from config import DEV_GUILD
 from src import logutil
-from src.bot import bot
 
 # Handle user permissions
 from src.permissions import Permissions, has_permission
@@ -21,110 +25,132 @@ from src.permissions import Permissions, has_permission
 logger = logutil.init_logger(os.path.basename(__file__))
 
 
-# Your main class command that encompasses the command functions
-# should end with a "CMD" (case insensitive).
-# If not, your class will not be loaded to receive commands.
-# This is useful to separate utility functions/classes from actual classes
-# that respond to commands
-class ButtonResponder():
-    # This class won't be loaded as a slash command
-    def __init__(self) -> None:
-        pass
+class HelloWorld(interactions.Extension):
+    def __init__(self, client: interactions.Client):
+        self.client: interactions.Client = client
+        logger.info(f"{__class__.__name__} cog registered")
 
-    def respond() -> str:
-        return "Hi there!"
+    # These are callback responders for the components below
+    @interactions.extension_component("primary_button")
+    async def _button_response(self, ctx: interactions.ComponentContext):
+        """Registers to the primary button"""
+        await ctx.send("You pressed a button!", ephemeral=True)
 
+    @interactions.extension_component("select_menu")
+    async def _selectmenu_respone(self, ctx: interactions.ComponentContext, options: list):
+        """Registers to the select menu"""
+        await ctx.send(f"You picked: {options[0]}", ephemeral=True)
 
-class HelloWorldCmd():
-    "Main class for the bot"
-    def __init__(self, *args, **kwargs):
-        # BEGIN cmd_config
-        # What will your command respond to?
-        self.NAME = "helloworld"
-
-        # What does your command do?
-        self.DESCRIPTION = "A simple hello world command"
-
-        # Write your options code here
-        self.OPTIONS = [
+    # This is a subcommand organized version
+    # To view regular structure, view helloworld_legacy.py
+    @interactions.extension_command(
+        name="hello",
+        description="The base of all things good",
+        scope=DEV_GUILD,
+        options=[
             Option(
-                name='message',
-                description='The message to echo',
-                type=OptionType.STRING,
-                required=False
+                type=OptionType.SUB_COMMAND,
+                name="world",
+                description="The simplest of commands",
+                options=[
+                    Option(
+                        type=OptionType.STRING,
+                        name="message",
+                        description="The message to echo",
+                        required=False
+                    )
+                ]
+            ),
+            Option(
+                type=OptionType.SUB_COMMAND,
+                name="admin",
+                description="Only admins can execute this",
+                options=[
+                    Option(
+                        type=OptionType.STRING,
+                        name="message",
+                        description="The message to echo",
+                        required=False
+                    )
+                ]
+            ),
+            Option(
+                type=OptionType.SUB_COMMAND_GROUP,
+                name="components",
+                description="Let's see some components",
+                options=[
+                    Option(
+                        type=OptionType.SUB_COMMAND,
+                        name="buttons",
+                        description="Buttons!"
+                    ),
+                    Option(
+                        type=OptionType.SUB_COMMAND,
+                        name="select_menu",
+                        description="Select menu!"
+                    )
+                ]
             )
         ]
-
-        # What type of command is it?
-        # (default: CHAT_INPUT)
-        self.TYPE = ApplicationCommandType.CHAT_INPUT
-        # END cmd_config
-        logger.info(f"{__class__.__name__} command class registered")
-
-    # A "command" function *must* exist here as well. This is what
-    # gets registered to fire when a slash command triggers
-    async def command(ctx, message: str = None):
-        """
-        Your command code goes here
-        """
-        logger.info("Got helloworld command")
-        await ctx.send("Hello world!\n```\n%s\n```" %
-                       message)
-
-
-# Here is an example for permissions checking
-class HelloAdminCmd():
-    "Responds only to admin"
-    def __init__(self, *args, **kwargs):
-        self.NAME = "helloadmin"
-        self.DESCRIPTION = "Say hello to an admin"
-        self.OPTIONS = [
-            Option(
-                name='message',
-                description="A message",
-                type=OptionType.STRING,
-                required=False
-            )
-        ]
-        self.TYPE = ApplicationCommandType.CHAT_INPUT
-        logger.info(f"{__class__.__name__} command class registered")
-
-    async def command(ctx, message: str = None):
-        logger.info("Got admin command")
-        # Check if the author has admin permissions
-        if not has_permission(int(ctx.author.permissions),
-                              Permissions.ADMINISTRATOR):
-            await ctx.send(
-                content="Not an admin, sorry",
-                ephemeral=True
-            )
-            return
-        await ctx.send(content="Hello world!\n```\n%s\n```" %
-                       message,
-                       ephemeral=True)
-
-
-# Here is an example of sending components
-class HelloButtonsCMD():
-    global button
-    button = Button(
-        style=ButtonStyle.PRIMARY,
-        label="Hello Buttons!",
-        custom_id="hello"
     )
+    async def hello_cmd(
+            self,
+            ctx: interactions.CommandContext,
+            sub_command: str,
+            sub_command_group: str = None,
+            message: str = None
+    ):
+        if sub_command == "world":
+            await ctx.send("Hello, world!\n```\n{}\n```".format(message))
+        elif sub_command == "admin":
+            if not has_permission(
+                int(ctx.author.permissions),
+                Permissions.ADMINISTRATOR
+            ):
+                await ctx.send(
+                    content="Not an admin, sorry",
+                    ephemeral=True
+                )
+            else:
+                await ctx.send(
+                    content="Hello admin! :sunglasses:\n```\n{}\n```".format(message),
+                    ephemeral=True
+                )
+        elif sub_command_group == "components" and sub_command == "buttons":
+            _component_btn = [
+                ActionRow(components=[
+                    Button(
+                        style=ButtonStyle.PRIMARY,
+                        label="Primary",
+                        custom_id="primary_button"
+                    ),
+                    Button(
+                        style=ButtonStyle.LINK,
+                        label="Something",
+                        url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
+                    )
+                ])
+            ]
+            await ctx.send("Here are some buttons!", components=_component_btn)
+        elif sub_command_group == "components" and sub_command == "select_menu":
+            _component_selectmenu = SelectMenu(
+                options=[
+                    SelectOption(
+                        label="1. Whoa",
+                        value="choice_1",
+                        description="A cool option",
+                    ),
+                    SelectOption(
+                        label="2. Wow",
+                        value="choice_2",
+                        description="A new cool option"
+                    )
+                ],
+                placeholder="Very cool things",
+                custom_id="select_menu"
+            )
+            await ctx.send("Here's a select menu!", components=_component_selectmenu)
 
-    def __init__(self) -> None:
-        self.NAME = "hellobuttons"
-        self.DESCRIPTION = "Send components"
-        self.TYPE = ApplicationCommandType.CHAT_INPUT
-        self.OPTIONS = None
-        self.bot = bot
-        logger.info(f"{__class__.__name__} command class registered")
 
-    async def command(ctx):
-        logger.info("Got a hellobuttons command")
-        await ctx.send("Hello! Here are some buttons", components=button)
-
-    @bot.component(button)
-    async def button_response(ctx):
-        await ctx.send(ButtonResponder.respond())
+def setup(client: interactions.Client):
+    HelloWorld(client)

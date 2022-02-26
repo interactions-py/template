@@ -7,14 +7,14 @@ Additional thanks to savioxavier
 """
 
 import logging
-from config import DEBUG, DEBUG_DISCORD # pylint: disable=import-error # This works fine?
+from config import DEBUG # pylint: disable=import-error # This works fine?
 
 def get_logger(name):
     """Function to get a logger
     Useful for modules that have already initialized a logger, such as discord.py
     """
     __logger = logging.getLogger(name)
-    __logger.setLevel(logging.DEBUG if DEBUG_DISCORD else logging.INFO)
+    __logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
     __ch = logging.StreamHandler()
     __ch.setFormatter(CustomFormatter())
     __logger.addHandler(__ch)
