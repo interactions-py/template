@@ -1,5 +1,5 @@
-# discord-py-interactions_boilerplate
-<h3 align=center>Boilerplate template for the discord-py-interactions library</h3>
+# interactions.py-boilerplate
+<h3 align=center>Python boilerplate template for the interactions.py Discord API wrapper</h3>
 <p align=center>A stripped down fork from contributions found in <a href="https://github.com/savioxavier/repo-finder-bot">savioxavier/repo-finder-bot</a></p>
 <hr>
 
@@ -17,7 +17,7 @@
     </tr>
 </table>
 
-![image](https://user-images.githubusercontent.com/29584664/146406854-88c2dfa8-d346-437e-a57b-1fc73be45b65.png)
+![image](https://user-images.githubusercontent.com/29584664/149206003-31a184ad-89e2-4481-978b-129cdebb892f.png)
 
 # Overview
 *As of discord-py-interactions v4.0.1, cog support is still in a planned stage and not supported. Until they are added, command modules will be in place of cogs*
@@ -80,3 +80,5 @@
 | **Special thanks** |
 | --- |
 | To [savioxavier](https://github.com/savioxavier/repo-finder-bot) for authoring the `repo-finder-bot`, allowing contributors alike to make this project happen |
+
+[![wakatime](https://wakatime.com/badge/github/V3ntus/discord-py-interactions_boilerplate.svg)](https://wakatime.com/badge/github/V3ntus/discord-py-interactions_boilerplate)
