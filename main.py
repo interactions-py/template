@@ -18,19 +18,14 @@ from dotenv import load_dotenv
 
 from src import logutil
 from src.bot import bot
-from config import DEBUG, DEBUG_DISCORD
+from config import DEBUG
 
 load_dotenv()
 
 # Configure logging for this main.py handler
 logger = logutil.init_logger("main.py")
-
-# Configure logging for Discord.py (continued in on_ready)
-# TODO: overwrite formatter, suppress warnings about missing attributes
-# interactions PR 421 should fix this
-
-logger.warning("Debug mode is %s; Discord debug is %s. This is not a warning, \
-just an indicator. You may safely ignore", DEBUG, DEBUG_DISCORD)
+logger.warning("Debug mode is %s; This is not a warning, \
+just an indicator. You may safely ignore", DEBUG)
 
 # Instantiate environment variables
 try:
@@ -111,20 +106,6 @@ async def command_help(ctx):
     await ctx.send(embeds=help_embed)
 # END command_help
 
-
-# BEGIN on_command_error
-@bot.event
-async def on_command_error(ctx, error):
-    "Gets called when a command fails"
-    logger.warning(
-        "A discord.py command error occured:\n%s",
-        error
-    )
-    await ctx.send(
-        f"A discord.py command error occured:\n```\n{error}```",
-        ephemeral=True
-    )
-# END on_command_error
 
 # BEGIN cogs_dynamic_loader
 # Fill this array with Python files in /cogs
