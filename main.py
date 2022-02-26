@@ -11,18 +11,21 @@ import os
 import sys
 
 import interactions
-from interactions import MISSING
 from dotenv import load_dotenv
+from interactions import MISSING
 
-from src import logutil
 from config import DEBUG, DEV_GUILD
+from src import logutil
 
 load_dotenv()
 
 # Configure logging for this main.py handler
 logger = logutil.init_logger("main.py")
-logger.debug("Debug mode is %s; This is not a warning, \
-just an indicator. You may safely ignore", DEBUG)
+logger.debug(
+    "Debug mode is %s; This is not a warning, \
+just an indicator. You may safely ignore",
+    DEBUG,
+)
 
 # Instantiate environment variables
 TOKEN = None
@@ -50,10 +53,9 @@ async def on_ready():
     global bot_user
     bot_user = interactions.User(**await client._http.get_self())
 
-    logger.info(
-        "Logged in as %s#%s" %
-        (bot_user.username, bot_user.discriminator)
-    )
+    logger.info("Logged in as %s#%s" % (bot_user.username, bot_user.discriminator))
+
+
 # END on_ready
 
 
@@ -67,11 +69,7 @@ cogs = [
 ]
 
 if cogs or cogs == []:
-    logger.info(
-        "Importing %s cogs: %s",
-        len(cogs),
-        ', '.join(cogs)
-    )
+    logger.info("Importing %s cogs: %s", len(cogs), ", ".join(cogs))
 else:
     logger.warning("Could not import any cogs!")
 

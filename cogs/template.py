@@ -3,6 +3,7 @@ This file provides a template for future commands.
 This file will not be loaded as a cog or module
 """
 import os
+
 import interactions
 
 from config import DEV_GUILD
@@ -24,9 +25,7 @@ class TemplateCog(interactions.Extension):
         logger.info(f"{__class__.__name__} cog registered")
 
     @interactions.extension_command(
-        name="test",
-        description="test command",
-        scope=DEV_GUILD
+        name="test", description="test command", scope=DEV_GUILD
     )
     async def test_cmd(self, ctx: interactions.CommandContext):
         """Register as an extension command"""

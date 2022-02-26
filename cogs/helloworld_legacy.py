@@ -4,16 +4,16 @@ Example cog for real world use
 This is safe to delete
 """
 import os
-import interactions
 
+import interactions
 from interactions import (
-    Option,
-    OptionType,
+    ActionRow,
     Button,
     ButtonStyle,
-    ActionRow,
+    Option,
+    OptionType,
     SelectMenu,
-    SelectOption
+    SelectOption,
 )
 
 from config import DEV_GUILD
@@ -37,7 +37,9 @@ class HelloWorldOld(interactions.Extension):
         await ctx.send("You pressed a button!", ephemeral=True)
 
     @interactions.extension_component("select_menu")
-    async def _selectmenu_respone(self, ctx: interactions.ComponentContext, options: list):
+    async def _selectmenu_respone(
+        self, ctx: interactions.ComponentContext, options: list
+    ):
         """Registers to the select menu"""
         await ctx.send(f"You picked: {options[0]}", ephemeral=True)
 
@@ -50,34 +52,23 @@ class HelloWorldOld(interactions.Extension):
                 type=OptionType.STRING,
                 name="message",
                 description="Message to echo",
-                required=False
+                required=False,
             )
-        ]
+        ],
     )
-    async def helloworld(
-            self,
-            ctx: interactions.CommandContext,
-            message: str = None
-    ):
+    async def helloworld(self, ctx: interactions.CommandContext, message: str = None):
         """A simple hello world command that presents a message option and echoes it back as a reply"""
         await ctx.send("Hello world!\n```\n{}\n```".format(message))
 
     @interactions.extension_command(
-        name="helloadmin",
-        description="Only admins can execute this",
-        scope=DEV_GUILD
+        name="helloadmin", description="Only admins can execute this", scope=DEV_GUILD
     )
     async def helloadmin(self, ctx: interactions.CommandContext):
         """A command that checks for admin perms before it continues"""
-        if not has_permission(int(ctx.author.permissions),
-                              Permissions.ADMINISTRATOR):
-            await ctx.send(
-                content="Not an admin, sorry",
-                ephemeral=True
-            )
+        if not has_permission(int(ctx.author.permissions), Permissions.ADMINISTRATOR):
+            await ctx.send(content="Not an admin, sorry", ephemeral=True)
         else:
-            await ctx.send(content="Hello, admin!",
-                           ephemeral=True)
+            await ctx.send(content="Hello, admin!", ephemeral=True)
 
     @interactions.extension_command(
         name="hellocomponents",
@@ -93,9 +84,9 @@ class HelloWorldOld(interactions.Extension):
                         type=OptionType.STRING,
                         name="option",
                         description="Test",
-                        required=False
+                        required=False,
                     )
-                ]
+                ],
             ),
             Option(
                 type=OptionType.SUB_COMMAND,
@@ -106,31 +97,31 @@ class HelloWorldOld(interactions.Extension):
                         type=OptionType.STRING,
                         name="option",
                         description="I do nothing. I just fix a bug",
-                        required=False
+                        required=False,
                     )
-                ]
-            )
-        ]
+                ],
+            ),
+        ],
     )
     async def hellocomponents(
-            self,
-            ctx: interactions.CommandContext,
-            sub_command: str = None
+        self, ctx: interactions.CommandContext, sub_command: str = None
     ):
         """Demo components and sub commands"""
         _component_btn = [
-            ActionRow(components=[
-                Button(
-                    style=ButtonStyle.PRIMARY,
-                    label="Primary",
-                    custom_id="primary_button"
-                ),
-                Button(
-                    style=ButtonStyle.LINK,
-                    label="Something",
-                    url="https://www.youtube.com/watch?v=dQw4w9WgXcQ"
-                )
-            ])
+            ActionRow(
+                components=[
+                    Button(
+                        style=ButtonStyle.PRIMARY,
+                        label="Primary",
+                        custom_id="primary_button",
+                    ),
+                    Button(
+                        style=ButtonStyle.LINK,
+                        label="Something",
+                        url="https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+                    ),
+                ]
+            )
         ]
         _component_selectmenu = SelectMenu(
             options=[
@@ -140,13 +131,11 @@ class HelloWorldOld(interactions.Extension):
                     description="A cool option",
                 ),
                 SelectOption(
-                    label="2. Wow",
-                    value="choice_2",
-                    description="A new cool option"
-                )
+                    label="2. Wow", value="choice_2", description="A new cool option"
+                ),
             ],
             placeholder="Very cool things",
-            custom_id="select_menu"
+            custom_id="select_menu",
         )
         if sub_command == "buttons":
             await ctx.send("Here are some buttons!", components=_component_btn)
