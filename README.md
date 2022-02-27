@@ -64,7 +64,7 @@
 
 # FAQ
 ## What happened to message commands?
-> As of discord-py-interactions v4, they have been removed. However, an extension has been developed that enables this feature once again: [Toricane/interactions-message-commands](https://github.com/Toricane/interactions-message-commands/)
+> As of interactions.py v4, they have been removed. However, an extension has been developed that enables this feature once again: [Toricane/interactions-message-commands](https://github.com/Toricane/interactions-message-commands/)
 
 ## Why aren't my slash commands getting registered?
 > There could be many reasons, but let's narrow it down
