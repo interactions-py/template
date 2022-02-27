@@ -48,8 +48,7 @@ class Permissions(Enum):
 
 
 # https://discord.com/developers/docs/topics/permissions#permissions
-def has_permission(permission_val: int,
-                   permission: Union[Permissions, int]) -> bool:
+def has_permission(permission_val: int, permission: Union[Permissions, int]) -> bool:
     if isinstance(permission, Permissions):
         permission = permission.value
     return permission_val & (1 << permission) == 1 << permission

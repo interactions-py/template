@@ -1,5 +1,5 @@
 "Enable DEBUG messages for logging"
 DEBUG = False
 
-"Enable verbose DEBUG Discord.py messages for logging"
-DEBUG_DISCORD = False
+"""The scope for your bot to operate in. This should be a guild ID or list of guild IDs"""
+DEV_GUILD = None
