@@ -14,7 +14,7 @@
     </td>
     </tr>
     <tr><td>
-        Status: <code>in-development</code>
+        Status: <code>production-ready</code>
     </td></tr>
 </table>
 
