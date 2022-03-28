@@ -3,7 +3,8 @@
 <p align=center>A stripped down fork from contributions found in <a href="https://github.com/savioxavier/repo-finder-bot">savioxavier/repo-finder-bot</a></p>
 <hr>
 
-- **Currently, this boilerplate supports `discord-py-interactions==3.0.2` but will be updated for future version later on. To switch to a different version, check the branches**
+## NOTICE:
+### **Currently, this boilerplate supports `discord-py-interactions==3.0.2`, yet version 3.x has been deprecated and has reached EOL. We highly recommend switching to v4 and up. Check the [branches](https://github.com/interactions-py/boilerplate/branches) to find v4 versions**
 
 ![image](https://user-images.githubusercontent.com/29584664/146406854-88c2dfa8-d346-437e-a57b-1fc73be45b65.png)
 
