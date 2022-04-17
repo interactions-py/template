@@ -41,22 +41,15 @@ finally:
         logger.critical("TOKEN variable not set. Cannot continue")
         sys.exit(1)
 
-client = interactions.Client(token=TOKEN, disable_sync=True)
+# Set disable_sync to True when not editing your commands (name, description, options, etc.)
+client = interactions.Client(token=TOKEN, disable_sync=False)
 
 
 # BEGIN on_ready
 @client.event
 async def on_ready():
     """Called when bot is ready to receive interactions"""
-
-    # globalize this so the user may be able to use it later on
-    global bot_user
-    bot_user = interactions.User(**await client._http.get_self())
-
-    logger.info("Logged in as %s#%s" % (bot_user.username, bot_user.discriminator))
-
-
-# END on_ready
+    logger.info("Logged in")
 
 
 # BEGIN cogs_dynamic_loader
