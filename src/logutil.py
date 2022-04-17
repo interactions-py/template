@@ -9,26 +9,6 @@ Additional thanks to savioxavier
 import logging
 from config import DEBUG # pylint: disable=import-error # This works fine?
 
-def get_logger(name):
-    """Function to get a logger
-    Useful for modules that have already initialized a logger, such as discord.py
-    """
-    __logger = logging.getLogger(name)
-    __logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
-    __ch = logging.StreamHandler()
-    __ch.setFormatter(CustomFormatter())
-    __logger.addHandler(__ch)
-    return __logger
-
-def init_logger(name="root"):
-    """Function to create a designated logger for separate modules"""
-    __logger = logging.Logger(name)
-    __ch = logging.StreamHandler()
-    __ch.setLevel(logging.DEBUG if DEBUG else logging.INFO)
-    __ch.setFormatter(CustomFormatter())
-    __logger.addHandler(__ch)
-    return __logger
-
 
 class CustomFormatter(logging.Formatter):
     """Custom formatter class"""
@@ -59,9 +39,45 @@ class CustomFormatter(logging.Formatter):
         logging.CRITICAL: bold_red +
         "[%(asctime)s][%(levelname)7s] %(message)s" + reset
     }
-    # Documenting my dwindling sanity here
 
     def format(self, record):
         log_fmt = self.FORMATS.get(record.levelno)
         formatter = logging.Formatter(log_fmt, datefmt="%I:%M.%S%p")
         return formatter.format(record)
+
+
+def overwrite_ipy_loggers():
+    for k, v in logging.Logger.manager.loggerDict.items():
+        print(k, v)
+        if k in [
+            "mixin",
+            "dispatch",
+            "http",
+            "gateway",
+            "client",
+            "context"
+        ]:
+            for h in v.handlers:
+                h.setFormatter(CustomFormatter)
+
+
+def get_logger(name):
+    """Function to get a logger
+    Useful for modules that have already initialized a logger, such as discord.py
+    """
+    __logger = logging.getLogger(name)
+    __logger.setLevel(logging.DEBUG if DEBUG else logging.INFO)
+    __ch = logging.StreamHandler()
+    __ch.setFormatter(CustomFormatter())
+    __logger.addHandler(__ch)
+    return __logger
+
+
+def init_logger(name="root"):
+    """Function to create a designated logger for separate modules"""
+    __logger = logging.Logger(name)
+    __ch = logging.StreamHandler()
+    __ch.setLevel(logging.DEBUG if DEBUG else logging.INFO)
+    __ch.setFormatter(CustomFormatter())
+    __logger.addHandler(__ch)
+    return __logger

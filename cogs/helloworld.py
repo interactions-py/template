@@ -6,6 +6,7 @@ This is safe to delete
 import os
 
 import interactions
+
 from interactions import (
     ActionRow,
     Button,
@@ -98,8 +99,10 @@ class HelloWorld(interactions.Extension):
     async def hello_cmd(
         self,
         ctx: interactions.CommandContext,
+        # The next two keyword args cannot be changed. This is how you determine sub commands
         sub_command: str,
         sub_command_group: str = None,
+        # The option we declare in our sub commands
         message: str = None,
     ):
         if sub_command == "world":

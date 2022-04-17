@@ -43,6 +43,7 @@ class HelloWorldOld(interactions.Extension):
         """Registers to the select menu"""
         await ctx.send(f"You picked: {options[0]}", ephemeral=True)
 
+    # Now the actual commands
     @interactions.extension_command(
         name="helloworld",
         description="The simplest of commands",
@@ -144,6 +145,7 @@ class HelloWorldOld(interactions.Extension):
 
 
 def setup(client: interactions.Client):
-    "Skip loading this"
-    # HelloWorldOld(client)
+    """Skip loading this
+    HelloWorldOld(client)
+    """
     pass
