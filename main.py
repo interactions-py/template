@@ -41,8 +41,24 @@ finally:
         logger.critical("TOKEN variable not set. Cannot continue")
         sys.exit(1)
 
+# presence is for the activity of the bot (can be watching, playing, listening, etc)
+# type=interactions.PresenceActivityType is the type of presence (GAME, STREAMING, LISTENING, WATCHING, etc.)
+# name="" is the custom displays next to the ActiviType text.
+# status=interactions.StatusType is the status (ONLINE, DND, IDLE, etc.) 
 # Set disable_sync to True when not editing your commands (name, description, options, etc.)
-client = interactions.Client(token=TOKEN, disable_sync=False)
+client = interactions.Client(
+    token=TOKEN,
+    presence=interactions.ClientPresence(
+        activities=[
+            interactions.PresenceActivity(
+                type=interactions.PresenceActivityType.WATCHING,
+                name="you."
+            )
+        ],
+        status=interactions.StatusType.ONLINE
+    ),
+    disable_sync=False
+)
 
 
 # BEGIN on_ready
