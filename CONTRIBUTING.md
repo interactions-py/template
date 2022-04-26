@@ -11,6 +11,8 @@ issue is not required if you deem the feature or bugfix you wish to implement is
 creating an issue would be considered excessive. Although, issues are very much encouraged to
 exercise organization in the development ecosystem.
 
+**- When contributing, please work in the relevant version branch, and target such branch on pull request creation.**
+
 ## Code of Conduct
 
 ### Our Standards
