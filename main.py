@@ -1,18 +1,13 @@
 """
 Main script to run
 
-This script initializes cogs and starts the bot
-
-Code taken from my contributions in:
-https://github.com/savioxavier/repo-finder-bot/
-Additional thanks to savioxavier
+This script initializes extensions and starts the bot
 """
 import os
 import sys
 
 import interactions
 from dotenv import load_dotenv
-from interactions import MISSING
 
 from config import DEBUG, DEV_GUILD
 from src import logutil
@@ -27,67 +22,37 @@ just an indicator. You may safely ignore",
     DEBUG,
 )
 
-# Instantiate environment variables
-TOKEN = None
-try:
-    if not (TOKEN := os.environ.get("TOKEN")):
-        TOKEN = None
-    if not DEV_GUILD or (DEV_GUILD := int(os.environ.get("DEV_GUILD"))):
-        DEV_GUILD = MISSING
-except TypeError:
-    pass
-finally:
-    if TOKEN is None:
-        logger.critical("TOKEN variable not set. Cannot continue")
-        sys.exit(1)
 
-# presence is for the activity of the bot (can be watching, playing, listening, etc)
-# type=interactions.PresenceActivityType is the type of presence (GAME, STREAMING, LISTENING, WATCHING, etc.)
-# name="" is the custom displays next to the ActiviType text.
-# status=interactions.StatusType is the status (ONLINE, DND, IDLE, etc.) 
-# Set disable_sync to True when not editing your commands (name, description, options, etc.)
+if not os.environ.get("TOKEN"):
+    logger.critical("TOKEN variable not set. Cannot continue")
+    sys.exit(1)
+
 client = interactions.Client(
-    token=TOKEN,
-    presence=interactions.ClientPresence(
-        activities=[
-            interactions.PresenceActivity(
-                type=interactions.PresenceActivityType.WATCHING,
-                name="you."
-            )
-        ],
-        status=interactions.StatusType.ONLINE
+    token=os.environ.get("TOKEN"),
+    activity=interactions.Activity(
+        name="with interactions", type=interactions.ActivityType.PLAYING
     ),
-    disable_sync=False
+    debug_scope=DEV_GUILD,
 )
 
 
-# BEGIN on_ready
-@client.event
-async def on_ready():
-    """Called when bot is ready to receive interactions"""
-    logger.info("Logged in")
+@interactions.listen()
+async def on_startup():
+    """Called when the bot starts"""
+    logger.info(f"Logged in as {client.user}")
 
 
-# BEGIN cogs_dynamic_loader
-# Fill this array with Python files in /cogs.
-# This omits __init__.py, template.py, and excludes files without a py file extension
-cogs = [
-    module[:-3]
-    for module in os.listdir(f"{os.path.dirname(__file__)}/cogs")
-    if module not in ("__init__.py", "template.py") and module[-3:] == ".py"
+# get all python files in "extensions" folder
+extensions = [
+    f"extensions.{f[:-3]}"
+    for f in os.listdir("extensions")
+    if f.endswith(".py") and not f.startswith("_")
 ]
-
-if cogs or cogs == []:
-    logger.info("Importing %s cogs: %s", len(cogs), ", ".join(cogs))
-else:
-    logger.warning("Could not import any cogs!")
-
-for cog in cogs:
+for extension in extensions:
     try:
-        client.load("cogs." + cog)
-    except Exception:  # noqa
-        logger.error("Could not load a cog: {}".format(cog), exc_info=DEBUG)
-
-# END cogs_dynamic_loader
+        client.load_extension(extension)
+        logger.info(f"Loaded extension {extension}")
+    except interactions.errors.ExtensionLoadException as e:
+        logger.exception(f"Failed to load extension {extension}.", exc_info=e)
 
 client.start()

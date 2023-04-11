@@ -1,3 +1,2 @@
-# discord-py-interactions==4.1.0
-git+https://github.com/interactions-py/library@4.1.1-rc1
+discord-py-interactions==5.0.0
 python-dotenv==0.19.1
